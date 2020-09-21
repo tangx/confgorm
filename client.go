@@ -2,7 +2,6 @@ package confmysql
 
 import (
 	"fmt"
-	"log"
 	"sync"
 
 	"gorm.io/driver/mysql"
@@ -25,7 +24,7 @@ func (m *Mysql) Init() {
 	lock.Lock()
 	defer lock.Unlock()
 
-	if m.db != nil {
+	if m.db == nil {
 		m.initial()
 	}
 
@@ -37,8 +36,9 @@ func (m *Mysql) initial() {
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=%s", m.Username, m.Password, m.Host, m.Port, m.Dbname, m.Charset)
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
-		log.Fatal(err)
-		return
+		// log.Fatal(err)
+		// return
+		panic(err)
 	}
 	m.db = db
 }
@@ -50,4 +50,10 @@ func (m *Mysql) SetDefaults() {
 	if m.Charset == "" {
 		m.Charset = "utf8mb4"
 	}
+}
+
+func (m *Mysql) Ping() {
+	var result interface{}
+	m.db.Raw("select 1;").Scan(&result)
+
 }
