@@ -15,7 +15,7 @@ type Mysql struct {
 	Password string `env:"password,omitempty"`
 	Dbname   string `env:"dbname,omitempty"`
 	Charset  string `env:"charset,omitempty"`
-	db       *gorm.DB
+	*gorm.DB
 }
 
 var lock = sync.Mutex{}
@@ -24,7 +24,7 @@ func (m *Mysql) Init() {
 	lock.Lock()
 	defer lock.Unlock()
 
-	if m.db == nil {
+	if m.DB == nil {
 		m.initial()
 	}
 
@@ -40,7 +40,7 @@ func (m *Mysql) initial() {
 		// return
 		panic(err)
 	}
-	m.db = db
+	m.DB = db
 }
 
 func (m *Mysql) SetDefaults() {
@@ -54,6 +54,5 @@ func (m *Mysql) SetDefaults() {
 
 func (m *Mysql) Ping() {
 	var result interface{}
-	m.db.Raw("select 1;").Scan(&result)
-
+	m.DB.Raw("select 1;").Scan(&result)
 }

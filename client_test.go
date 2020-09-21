@@ -14,4 +14,5 @@ func TestPing(t *testing.T) {
 
 	m.Init()
 	m.Ping()
+
 }
