@@ -1,6 +1,7 @@
 package confmysql
 
 import (
+	"fmt"
 	"log"
 	"sync"
 
@@ -9,12 +10,12 @@ import (
 )
 
 type Mysql struct {
-	Host     string
-	Port     int
-	Username string
-	Password string
-	DbName   string
-	Charset  string
+	Host     string `env:"host,omitempty"`
+	Port     int    `env:"port,omitempty"`
+	Username string `env:"username,omitempty"`
+	Password string `env:"password,omitempty"`
+	Dbname   string `env:"dbname,omitempty"`
+	Charset  string `env:"charset,omitempty"`
 	db       *gorm.DB
 }
 
@@ -29,10 +30,11 @@ func (m *Mysql) Init() {
 	}
 
 }
+
 func (m *Mysql) initial() {
 	m.SetDefaults()
 
-	dsn := "user:pass@tcp(127.0.0.1:3306)/dbname?charset=utf8mb4&parseTime=True&loc=Local"
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=%s", m.Username, m.Password, m.Host, m.Port, m.Dbname, m.Charset)
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatal(err)
