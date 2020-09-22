@@ -1,4 +1,4 @@
-package confmysql
+package confgorm
 
 import (
 	"fmt"
@@ -18,11 +18,11 @@ type Mysql struct {
 	*gorm.DB
 }
 
-var lock = sync.Mutex{}
+var mysqlLock = sync.Mutex{}
 
 func (m *Mysql) Init() {
-	lock.Lock()
-	defer lock.Unlock()
+	mysqlLock.Lock()
+	defer mysqlLock.Unlock()
 
 	if m.DB == nil {
 		m.initial()
