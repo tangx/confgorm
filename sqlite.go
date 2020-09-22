@@ -1,6 +1,7 @@
 package confgorm
 
 import (
+	"path/filepath"
 	"sync"
 
 	"gorm.io/driver/sqlite"
@@ -25,7 +26,13 @@ func (s *Sqlite) Init() {
 
 func (s *Sqlite) initial() {
 	s.SetDefaults()
-	db, err := gorm.Open(sqlite.Open("test.db"), &gorm.Config{})
+
+	dir := filepath.Dir(s.DbFile)
+	if !DirExists(dir) {
+		MustMkdir(dir)
+	}
+
+	db, err := gorm.Open(sqlite.Open(s.DbFile), &gorm.Config{})
 	if err != nil {
 		panic("failed to connect database")
 	}
